@@ -7,7 +7,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 【请填写功能名称】对象 zgoods
- * 
+ *
+ *
  * @author ruoyi
  * @date 2020-11-03
  */
