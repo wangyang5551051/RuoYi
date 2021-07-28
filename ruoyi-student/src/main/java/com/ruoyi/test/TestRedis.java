@@ -1,15 +1,30 @@
 package com.ruoyi.test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.ruoyi.test.domain.Zgoods;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import redis.clients.jedis.Jedis;
+
+import java.sql.SQLOutput;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest //需要依赖spring容器,从容器中动态的获取对象
 public class TestRedis {
 
     @Autowired
     private Jedis jedis;
+
+    @Test
+    public void test4 (){
+
+    }
+
     /**
      * 完成Redis入门案例测试
      * 报错说明:

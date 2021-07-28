@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.test.mapper.ZgoodsMapper">
+    
+    <resultMap type="com.ruoyi.test.domain.Zgoods" id="ZgoodsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="num"    column="num"    />
+    </resultMap>
+
+    <sql id="selectZgoodsVo">
+        select id, name, num from zgoods
+    </sql>
+
+    <select id="selectZgoodsList" parameterType="com.ruoyi.test.domain.Zgoods" resultMap="ZgoodsResult">
+        <include refid="selectZgoodsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="num != null "> and num = #{num}</if>
+        </where>
+    </select>
+    
+    <select id="selectZgoodsById" parameterType="Long" resultMap="ZgoodsResult">
+        <include refid="selectZgoodsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZgoods" parameterType="com.ruoyi.test.domain.Zgoods" useGeneratedKeys="true" keyProperty="id">
+        insert into zgoods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="num != null">num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="num != null">#{num},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZgoods" parameterType="com.ruoyi.test.domain.Zgoods">
+        update zgoods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="num != null">num = #{num},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="killZgoods" parameterType="Long">
+        update zgoods
+        <trim prefix="SET" suffixOverrides=",">
+           num = num - 1,
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZgoodsById" parameterType="Long">
+        delete from zgoods where id = #{id}
+    </delete>
+
+    <delete id="deleteZgoodsByIds" parameterType="String">
+        delete from zgoods where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

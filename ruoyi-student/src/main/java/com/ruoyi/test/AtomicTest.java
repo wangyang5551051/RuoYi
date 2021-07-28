@@ -24,7 +24,6 @@ class SpinLock {
     public void unLock() {
         Thread cur = Thread.currentThread();
         owner.compareAndSet(cur, null);
-
     }
 
 
@@ -38,8 +37,8 @@ class SpinLock {
 
         public static void main(String[] args) throws InterruptedException {
             SpinLock lock = new SpinLock();
-            for (int i = 0; i < 100; i++) {
-                AtomicTest test = new AtomicTest(lock);
+            AtomicTest test = new AtomicTest(lock);
+            for (int i = 0; i < 2000; i++) {
                 Thread t = new Thread(test);
                 t.start();
             }
@@ -50,9 +49,12 @@ class SpinLock {
 
         @Override
         public void run() {
-            this.lock.lock();
-            sum++;
-            this.lock.unLock();
+//            this.lock.lock();
+            synchronized (AtomicTest.class){
+                sum++;
+            }
+
+//            this.lock.unLock();
         }
     }
 }

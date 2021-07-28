@@ -3,6 +3,11 @@ package com.ruoyi.test;
 
 import com.rabbitmq.client.Channel;
 import com.ruoyi.common.config.RabbitConfig;
+import com.ruoyi.common.utils.uuid.UUID;
+import com.ruoyi.test.domain.Zgoods;
+import com.ruoyi.test.domain.Zorder;
+import com.ruoyi.test.mapper.ZgoodsMapper;
+import com.ruoyi.test.mapper.ZorderMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -10,17 +15,19 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 
 @Component
 public class BusinessMessageReceiver {
-//    @Autowired
-//    private Jedis jedis;
-
     @Autowired
     private JedisPool jedisPool;
+    @Autowired
+    private ZorderMapper zorderMapper;
+    @Autowired
+    private ZgoodsMapper zgoodsMapper;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -101,27 +108,24 @@ public class BusinessMessageReceiver {
 
     }
 
-//    @RabbitListener(queues = RabbitConfig.QUEUE_C)
-//    public void receiveC(Message message, Channel channel) throws IOException {
-//        long deliveryTag = message.getMessageProperties().getDeliveryTag();
-//        String msg = new String(message.getBody());
-//        logger.info("收到业务消息A：{}", msg);
-//        boolean ack = true;
-//        Exception exception = null;
-//        try {
-//            if (msg.contains("河南")){
-//                throw new RuntimeException("dead letter exception");
-//            }
-//        } catch (Exception e){
-//            ack = false;
-//            exception = e;
-//        }
-//        if (!ack){
-//            logger.error("消息消费发生异常，error msg:{}", exception.getMessage(), exception);
-//            channel.basicReject(deliveryTag, false);
-//        } else {
-//            channel.basicAck(deliveryTag, true);
-//        }
-//    }
+    @RabbitListener(queues = RabbitConfig.QUEUE_B)
+    @Transactional
+    public void receiveC(Message message, Channel channel) throws IOException {
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        String msg = new String(message.getBody());
+        logger.info("收到业务消息：" + msg);
+        String orderId = UUID.randomUUID().toString();
+        try {
+            Zorder zorder = new Zorder();
+            zorder.setName("小米10");
+            zorder.setOrderId(orderId);
+            zorder.setNum(1);
+            zorderMapper.insertZorder(zorder);
+            zgoodsMapper.killZgoods(1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        channel.basicAck(deliveryTag, true);
+    }
 
 }

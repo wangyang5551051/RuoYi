@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.test.mapper.ZorderMapper">
+    
+    <resultMap type="com.ruoyi.test.domain.Zorder" id="ZorderResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="orderId"    />
+        <result property="name"    column="name"    />
+        <result property="num"    column="num"    />
+    </resultMap>
+
+    <sql id="selectZorderVo">
+        select id, orderId, name, num from zorder
+    </sql>
+
+    <select id="selectZorderList" parameterType="com.ruoyi.test.domain.Zorder" resultMap="ZorderResult">
+        <include refid="selectZorderVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and orderId = #{orderId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="num != null "> and num = #{num}</if>
+        </where>
+    </select>
+    
+    <select id="selectZorderById" parameterType="Long" resultMap="ZorderResult">
+        <include refid="selectZorderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZorder" parameterType="com.ruoyi.test.domain.Zorder" useGeneratedKeys="true" keyProperty="id">
+        insert into zorder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">orderId,</if>
+            <if test="name != null">name,</if>
+            <if test="num != null">num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="num != null">#{num},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZorder" parameterType="com.ruoyi.test.domain.Zorder">
+        update zorder
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">orderId = #{orderId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="num != null">num = #{num},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZorderById" parameterType="Long">
+        delete from zorder where id = #{id}
+    </delete>
+
+    <delete id="deleteZorderByIds" parameterType="String">
+        delete from zorder where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

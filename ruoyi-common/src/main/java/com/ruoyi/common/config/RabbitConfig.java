@@ -89,10 +89,10 @@ public class RabbitConfig {
      DirectExchange:按照routingkey分发到指定队列
      TopicExchange:多关键字匹配
      */
-    @Bean
-    public FanoutExchange defaultExchange() {
-        return new FanoutExchange(EXCHANGE_A);
-    }
+//    @Bean
+//    public FanoutExchange defaultExchange() {
+//        return new FanoutExchange(EXCHANGE_A);
+//    }
 
     /**
      * 针对消费者配置
@@ -126,14 +126,10 @@ public class RabbitConfig {
      * 获取队列B
      * @return
      */
-//    @Bean
-//    public Queue queueB() {
-//        //设置死信队列
-//        Map<String, Object> args = new HashMap<String, Object>();
-//        args.put("x-dead-letter-exchange",EXCHANGE_C);
-//        args.put("x-dead-letter-routing-key",ROUTINGKEY_C);
-//        return QueueBuilder.durable(QUEUE_B).withArguments(args).build();//队列持久
-//    }
+    @Bean
+    public Queue queueB() {
+        return new Queue(QUEUE_B, true);//队列持久
+    }
 
     /**
      * 获取队列C
@@ -150,10 +146,10 @@ public class RabbitConfig {
      * 绑定队列A到交换机A
      * @return
      */
-    @Bean
-    public Binding binding() {
-        return BindingBuilder.bind(queueA()).to(defaultExchange());
-    }
+//    @Bean
+//    public Binding binding() {
+//        return BindingBuilder.bind(queueA()).to(defaultExchange());
+//    }
 
 
 
@@ -161,18 +157,18 @@ public class RabbitConfig {
      * 绑定队列B到交换机A
      * @return
      */
-//    @Bean
-//    public Binding bindingB(){
-//        return BindingBuilder.bind(queueB()).to(defaultExchange());
-//    }
+    @Bean
+    public Binding bindingB(){
+        return BindingBuilder.bind(queueB()).to(defaultExchangeC()).with(ROUTINGKEY_B);
+    }
 
     /**
      * 绑定队列C到死信交换机C 通过KEY
      * @return
      */
-    @Bean
-    public Binding bindingC(){
-        return BindingBuilder.bind(queueC()).to(defaultExchangeC()).with(ROUTINGKEY_C);
-    }
+//    @Bean
+//    public Binding bindingC(){
+//        return BindingBuilder.bind(queueC()).to(defaultExchangeC()).with(ROUTINGKEY_C);
+//    }
 
 }
