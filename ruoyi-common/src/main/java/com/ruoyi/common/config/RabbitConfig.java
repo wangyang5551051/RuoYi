@@ -62,6 +62,7 @@ public class RabbitConfig {
 
     public static final String ROUTINGKEY_C = "spring-boot-routingKey_C";
 
+
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(host, port);
